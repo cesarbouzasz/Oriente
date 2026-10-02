@@ -1,0 +1,49 @@
+name: cercano_oriente
+publish_to: "none"
+description: Aplicación local de orientación educativa con datos cifrados de menores.
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  sqlite3: ^3.6.0
+  file_picker: ^13.1.0
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  flutter_secure_storage: ^11.2.0
+  crypto: ^3.0.7
+  uuid: ^4.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  msix: ^3.18.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/portada_cercano_oriente.jfif
+
+# sqlite3 3.x usa Dart/Flutter native assets. El valor `sqlcipher` selecciona
+# el binario SQLCipher publicado para cada target nativo compatible.
+hooks:
+  user_defines:
+    sqlite3:
+      source:
+        android: sqlcipher
+        macos: sqlcipher
+        windows: sqlcipher
+        default: sqlcipher
+
+msix_config:
+  display_name: Cercano Oriente
+  publisher_display_name: Cercano Oriente
+  identity_name: com.cercanooriente.app
+  msix_version: 0.1.0.0
+  install_certificate: false

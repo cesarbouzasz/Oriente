@@ -1,0 +1,40 @@
+workflows:
+  cercano-oriente-android:
+    name: Cercano Oriente Android APK
+    instance_type: linux_x2
+    max_build_duration: 60
+    environment:
+      flutter: stable
+    scripts:
+      - name: Generate Android platform files
+        script: flutter create --platforms=android .
+      - name: Dependencies
+        script: flutter pub get
+      - name: Analyze and test
+        script: flutter analyze && flutter test
+      - name: Build APK
+        script: flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+
+  cercano-oriente-windows:
+    name: Cercano Oriente Windows EXE/MSIX
+    instance_type: windows_x2
+    max_build_duration: 60
+    environment:
+      flutter: stable
+    scripts:
+      - name: Generate Windows platform files
+        script: flutter create --platforms=windows .
+      - name: Dependencies
+        script: flutter pub get
+      - name: Analyze and test
+        script: flutter analyze && flutter test
+      - name: Build Windows
+        script: flutter build windows --release
+      - name: Create MSIX
+        script: dart run msix:create --store
+    artifacts:
+      - build/windows/x64/runner/Release/**/*.exe
+      - build/windows/x64/runner/Release/**/*.dll
+      - build/windows/x64/runner/Release/**/*.msix
