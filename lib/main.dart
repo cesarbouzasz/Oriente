@@ -139,9 +139,11 @@ class HomePage extends StatelessWidget {
                 final dir = await BackupService().chooseBackupDirectory();
                 if (dir == null || !context.mounted) return;
                 await BackupService().createBackup(databasePath: databasePath, destinationDirectory: dir);
-                if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Copia cifrada creada correctamente.')),
-                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Copia cifrada creada correctamente.')),
+                  );
+                }
               },
             ),
           ]),
