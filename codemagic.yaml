@@ -8,6 +8,8 @@ workflows:
     scripts:
       - name: Generate Android platform files
         script: flutter create --platforms=android .
+      - name: Remove generated default widget test
+        script: rm -f test/widget_test.dart
       - name: Dependencies
         script: flutter pub get
       - name: Analyze and test
@@ -26,6 +28,8 @@ workflows:
     scripts:
       - name: Generate Windows platform files
         script: flutter create --platforms=windows .
+      - name: Remove generated default widget test
+        script: Remove-Item -Force -ErrorAction SilentlyContinue test/widget_test.dart
       - name: Dependencies
         script: flutter pub get
       - name: Analyze and test

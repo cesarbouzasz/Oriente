@@ -1,0 +1,61 @@
+name: Build Cercano Oriente
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  android-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=android .
+      - run: rm -f test/widget_test.dart
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cercano-oriente-android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+
+  windows-exe-msix:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=windows .
+      - name: Remove generated default widget test
+        shell: pwsh
+        run: Remove-Item -Force -ErrorAction SilentlyContinue test/widget_test.dart
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build windows --release
+      - name: Archive Windows executable bundle
+        shell: pwsh
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath cercano-oriente-windows-exe.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cercano-oriente-windows-exe
+          path: cercano-oriente-windows-exe.zip
+          if-no-files-found: error
+      - run: dart run msix:create --store
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cercano-oriente-windows-msix
+          path: build/windows/x64/runner/Release/*.msix
+          if-no-files-found: error
