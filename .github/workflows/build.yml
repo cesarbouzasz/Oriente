@@ -53,7 +53,8 @@ jobs:
           name: cercano-oriente-windows-exe
           path: cercano-oriente-windows-exe.zip
           if-no-files-found: error
-      - run: dart run msix:create --store
+      - name: Create unsigned/development MSIX
+        run: dart run msix:create --release
       - uses: actions/upload-artifact@v4
         with:
           name: cercano-oriente-windows-msix

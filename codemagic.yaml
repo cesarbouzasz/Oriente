@@ -37,7 +37,7 @@ workflows:
       - name: Build Windows
         script: flutter build windows --release
       - name: Create MSIX
-        script: dart run msix:create --store
+        script: dart run msix:create --release
     artifacts:
       - build/windows/x64/runner/Release/**/*.exe
       - build/windows/x64/runner/Release/**/*.dll
