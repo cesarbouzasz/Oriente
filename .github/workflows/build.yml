@@ -18,6 +18,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter create --platforms=android .
+      - run: rm -f test/widget_test.dart
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
@@ -37,6 +38,9 @@ jobs:
           channel: stable
           cache: true
       - run: flutter create --platforms=windows .
+      - name: Remove generated default widget test
+        shell: pwsh
+        run: Remove-Item -Force -ErrorAction SilentlyContinue test/widget_test.dart
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
