@@ -37,6 +37,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           candidates = [Path('android/app/build.gradle'), Path('android/app/build.gradle.kts')]
           path = next((candidate for candidate in candidates if candidate.exists()), None)
@@ -58,6 +59,16 @@ jobs:
                   text += "\n\ndependencies {\n    coreLibraryDesugaring(\"com.android.tools:desugar_jdk_libs:2.1.4\")\n}\n"
               else:
                   text += "\n\ndependencies {\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\n}\n"
+          if kotlin_dsl:
+              text = re.sub(r'isMinifyEnabled\s*=\s*true', 'isMinifyEnabled = false', text)
+              text = re.sub(r'isShrinkResources\s*=\s*true', 'isShrinkResources = false', text)
+              if 'isMinifyEnabled = false' not in text:
+                  text += "\n\nandroid {\n    buildTypes {\n        getByName(\"release\") {\n            isMinifyEnabled = false\n            isShrinkResources = false\n        }\n    }\n}\n"
+          else:
+              text = re.sub(r'minifyEnabled\s+true', 'minifyEnabled false', text)
+              text = re.sub(r'shrinkResources\s+true', 'shrinkResources false', text)
+              if 'minifyEnabled false' not in text:
+                  text += "\n\nandroid {\n    buildTypes {\n        release {\n            minifyEnabled false\n            shrinkResources false\n        }\n    }\n}\n"
           path.write_text(text)
           PY
 
