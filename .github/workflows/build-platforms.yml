@@ -38,15 +38,26 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
-          path = Path('android/app/build.gradle')
+          candidates = [Path('android/app/build.gradle'), Path('android/app/build.gradle.kts')]
+          path = next((candidate for candidate in candidates if candidate.exists()), None)
+          if path is None:
+              raise SystemExit('No se encontró android/app/build.gradle ni android/app/build.gradle.kts')
           text = path.read_text()
+          kotlin_dsl = path.suffix == '.kts'
           if 'isCoreLibraryDesugaringEnabled' not in text and 'coreLibraryDesugaringEnabled' not in text:
               marker = 'android {\n'
               if marker not in text:
                   raise SystemExit('No se encontró el bloque android en android/app/build.gradle')
-              text = text.replace(marker, marker + "    compileOptions {\n        coreLibraryDesugaringEnabled true\n        sourceCompatibility JavaVersion.VERSION_11\n        targetCompatibility JavaVersion.VERSION_11\n    }\n", 1)
+              if kotlin_dsl:
+                  options = "    compileOptions {\n        isCoreLibraryDesugaringEnabled = true\n        sourceCompatibility = JavaVersion.VERSION_11\n        targetCompatibility = JavaVersion.VERSION_11\n    }\n"
+              else:
+                  options = "    compileOptions {\n        coreLibraryDesugaringEnabled true\n        sourceCompatibility JavaVersion.VERSION_11\n        targetCompatibility JavaVersion.VERSION_11\n    }\n"
+              text = text.replace(marker, marker + options, 1)
           if 'coreLibraryDesugaring ' not in text:
-              text += "\n\ndependencies {\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\n}\n"
+              if kotlin_dsl:
+                  text += "\n\ndependencies {\n    coreLibraryDesugaring(\"com.android.tools:desugar_jdk_libs:2.1.4\")\n}\n"
+              else:
+                  text += "\n\ndependencies {\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\n}\n"
           path.write_text(text)
           PY
 
