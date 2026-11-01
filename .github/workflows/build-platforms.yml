@@ -1,0 +1,95 @@
+name: Build Android and Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_CHANNEL: stable
+
+jobs:
+  android-apk:
+    name: Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Flutter diagnostics
+        run: flutter doctor -v
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: cercano-oriente-android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
+
+  windows-portable:
+    name: Windows portable
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Enable Windows desktop
+        shell: pwsh
+        run: flutter config --enable-windows-desktop
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Package portable application
+        shell: pwsh
+        run: |
+          $source = "build/windows/x64/runner/Release"
+          $package = "CercanoOrientePortable"
+          New-Item -ItemType Directory -Force -Path $package | Out-Null
+          Copy-Item -Path "$source\*" -Destination $package -Recurse -Force
+          New-Item -ItemType Directory -Force -Path "$package\datos", "$package\documentos", "$package\backups" | Out-Null
+          @'
+          CERCANO ORIENTE - VERSIÓN PORTABLE
+          ==================================
+
+          Ejecuta cercano_oriente.exe.
+          Selecciona una base de datos SQLCipher existente o crea una nueva.
+          Mantén la aplicación y sus carpetas juntas.
+          No desconectes el pendrive mientras la aplicación esté abierta.
+          '@ | Set-Content -Path "$package\README.txt" -Encoding UTF8
+          Compress-Archive -Path "$package\*" -DestinationPath "cercano-oriente-windows-portable.zip" -Force
+
+      - name: Upload Windows portable ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: cercano-oriente-windows-portable
+          path: cercano-oriente-windows-portable.zip
+          if-no-files-found: error
+          retention-days: 14
