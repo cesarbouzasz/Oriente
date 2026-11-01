@@ -65,7 +65,8 @@ jobs:
         run: flutter pub get
 
       - name: Build release APK
-        run: flutter build apk --release
+        # signer_pdf/PDFBox incluye soporte opcional JP2; se desactiva R8 para la APK de prueba.
+        run: flutter build apk --release --no-shrink
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
