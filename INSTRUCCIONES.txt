@@ -1,0 +1,19 @@
+EXTRAER DIRECTAMENTE SOBRE LA RAIZ DEL REPOSITORIO ORIENTE
+==========================================================
+
+Este ZIP es plano: no debes copiar la carpeta contenedora.
+Al abrirlo deben verse directamente estas rutas:
+  lib/ui/login_page.dart
+  lib/services/file_selection_service.dart
+  pubspec.yaml
+  assets/images/login_cover.png
+  .github/workflows/build-platforms.yml
+
+Extrae el contenido directamente en la carpeta local Oriente y acepta reemplazar.
+En GitHub Desktop deben aparecer cambios en login_page.dart, file_selection_service.dart,
+pubspec.yaml, assets y build-platforms.yml.
+
+Comprueba que login_page.dart contiene:
+  _FloatingLoginPanel
+  _createDatabase
+  Crear nueva
