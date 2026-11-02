@@ -1,11 +1,18 @@
-CORRECCIÓN DE ASSETS FLUTTER
-============================
+MEJORA DE ACCESO Y CREACIÓN DE BASE CIFRADA
+============================================
 
-Copia la carpeta assets completa en la raíz del repositorio Oriente y reemplaza si Windows lo solicita.
+Incluye:
+- Botón Crear nueva base cifrada.
+- Solicitud y confirmación de contraseña máster de mínimo 12 caracteres.
+- Creación SQLCipher y tablas iniciales al abrirla.
+- Portada a pantalla completa.
+- Marca y panel de acceso flotantes sobre el banner.
+- Mensajes de error integrados en el panel.
 
-Resultado esperado:
-  Oriente/assets/images/portada_cercano_oriente.jfif
-  Oriente/assets/images/login_cover.png
+INTEGRACIÓN
+-----------
+Copia los dos archivos manteniendo sus rutas en la raíz del repositorio:
+  lib/ui/login_page.dart
+  lib/services/file_selection_service.dart
 
-pubspec.yaml ya declara exactamente estas dos rutas.
-Después haz commit y push para que GitHub Actions vuelva a compilar.
+Haz commit y push. Después recompila la APK y Windows.

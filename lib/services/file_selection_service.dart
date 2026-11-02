@@ -10,6 +10,13 @@ class FileSelectionService {
     return file?.path;
   }
 
+  Future<String?> chooseNewDatabasePath() => FilePicker.saveFile(
+        dialogTitle: 'Crear nueva base de datos cifrada',
+        fileName: 'cercano_oriente.db',
+        type: FileType.custom,
+        allowedExtensions: ['db'],
+      );
+
   Future<String?> chooseBackupFile() async {
     final file = await FilePicker.pickFile(
       type: FileType.custom,
