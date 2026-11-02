@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 
 class FileSelectionService {
@@ -13,6 +15,7 @@ class FileSelectionService {
   Future<String?> chooseNewDatabasePath() => FilePicker.saveFile(
         dialogTitle: 'Crear nueva base de datos cifrada',
         fileName: 'cercano_oriente.db',
+        bytes: Uint8List(0),
         type: FileType.custom,
         allowedExtensions: ['db'],
       );
