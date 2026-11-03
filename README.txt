@@ -1,18 +1,18 @@
-MEJORA DE ACCESO Y CREACIÓN DE BASE CIFRADA
-============================================
+RESTAURACIÓN DE FUENTES FALTANTES
+=================================
 
-Incluye:
-- Botón Crear nueva base cifrada.
-- Solicitud y confirmación de contraseña máster de mínimo 12 caracteres.
-- Creación SQLCipher y tablas iniciales al abrirla.
-- Portada a pantalla completa.
-- Marca y panel de acceso flotantes sobre el banner.
-- Mensajes de error integrados en el panel.
+El error no era de Windows: el repositorio carecía de siete archivos Dart que
+el dashboard importaba. Este paquete incluye esos siete archivos y conserva
+main.dart/login_page.dart/file_selection_service.dart corregidos.
 
-INTEGRACIÓN
------------
-Copia los dos archivos manteniendo sus rutas en la raíz del repositorio:
-  lib/ui/login_page.dart
-  lib/services/file_selection_service.dart
+Copia el contenido directamente sobre la raíz de Oriente.
+Debe aparecer en GitHub Desktop, como mínimo:
+  lib/core/app_languages.dart
+  lib/services/educational_template_catalog.dart
+  lib/services/ics_calendar_service.dart
+  lib/services/local_reminder_service.dart
+  lib/ui/agenda_toolbar.dart
+  lib/ui/records_pages.dart
+  lib/ui/service_types_page.dart
 
-Haz commit y push. Después recompila la APK y Windows.
+Haz commit y push. No descargues un artifact hasta que una nueva ejecución termine en verde.
