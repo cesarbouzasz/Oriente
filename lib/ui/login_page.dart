@@ -199,7 +199,25 @@ class _LoginPageState extends State<LoginPage> {
 
 class _FloatingBrand extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => ClipRRect(borderRadius: BorderRadius.circular(22), child: BackdropFilter(filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: Container(padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12), color: Colors.black.withOpacity(.24), child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('CERCANO ORIENTE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, letterSpacing: 2)), Text('Orientación educativa · local · privada', style: TextStyle(color: Colors.white70))])));
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          color: Colors.black.withOpacity(.24),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('CERCANO ORIENTE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, letterSpacing: 2)),
+              Text('Orientación educativa · local · privada', style: TextStyle(color: Colors.white70)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _FloatingLoginPanel extends StatelessWidget {
@@ -217,7 +235,44 @@ class _FloatingLoginPanel extends StatelessWidget {
   final VoidCallback onConfigurePin;
 
   @override
-  Widget build(BuildContext context) => ClipRRect(borderRadius: BorderRadius.circular(28), child: BackdropFilter(filter: ui.ImageFilter.blur(sigmaX: 14, sigmaY: 14), child: Container(color: Theme.of(context).colorScheme.surface.withOpacity(.86), padding: const EdgeInsets.all(22), child: Column(mainAxisSize: MainAxisSize.min, children: [Text('Acceso seguro', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)), const SizedBox(height: 4), const Text('Tus datos permanecen cifrados en este dispositivo.'), const SizedBox(height: 18), Row(children: [Expanded(child: OutlinedButton.icon(onPressed: onChoose, icon: const Icon(Icons.folder_open), label: Text(databasePath == null ? 'Abrir .db' : 'Cambiar .db'))), const SizedBox(width: 10), Expanded(child: FilledButton.tonalIcon(onPressed: busy ? null : onCreate, icon: const Icon(Icons.add_circle_outline), label: const Text('Crear nueva')))]), if (databasePath != null) _DatabaseInfo(path: databasePath!), const SizedBox(height: 12), if (!masterMode) TextField(controller: pin, obscureText: true, keyboardType: TextInputType.number, maxLength: 5, decoration: const InputDecoration(labelText: 'PIN local de 5 dígitos', border: OutlineInputBorder())), if (masterMode) TextField(controller: master, obscureText: true, decoration: const InputDecoration(labelText: 'Contraseña máster SQLCipher', helperText: 'Mínimo 12 caracteres; nunca viaja a la nube.', border: OutlineInputBorder())), const SizedBox(height: 12), SizedBox(width: double.infinity, child: FilledButton(onPressed: busy ? null : onOpen, child: Text(busy ? 'Abriendo…' : 'Abrir espacio seguro'))), TextButton(onPressed: onToggleMode, child: Text(masterMode ? 'Usar PIN local' : 'Usar contraseña máster')), if (!masterMode) TextButton(onPressed: onConfigurePin, child: const Text('Configurar PIN en este dispositivo')), if (message != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(message!, textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.w600)))])));
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        child: Container(
+          color: colors.surface.withOpacity(.86),
+          padding: const EdgeInsets.all(22),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Acceso seguro', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
+              const SizedBox(height: 4),
+              const Text('Tus datos permanecen cifrados en este dispositivo.'),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(child: OutlinedButton.icon(onPressed: onChoose, icon: const Icon(Icons.folder_open), label: Text(databasePath == null ? 'Abrir .db' : 'Cambiar .db'))),
+                  const SizedBox(width: 10),
+                  Expanded(child: FilledButton.tonalIcon(onPressed: busy ? null : onCreate, icon: const Icon(Icons.add_circle_outline), label: const Text('Crear nueva'))),
+                ],
+              ),
+              if (databasePath != null) _DatabaseInfo(path: databasePath!),
+              const SizedBox(height: 12),
+              if (!masterMode) TextField(controller: pin, obscureText: true, keyboardType: TextInputType.number, maxLength: 5, decoration: const InputDecoration(labelText: 'PIN local de 5 dígitos', border: OutlineInputBorder())),
+              if (masterMode) TextField(controller: master, obscureText: true, decoration: const InputDecoration(labelText: 'Contraseña máster SQLCipher', helperText: 'Mínimo 12 caracteres; nunca viaja a la nube.', border: OutlineInputBorder())),
+              const SizedBox(height: 12),
+              SizedBox(width: double.infinity, child: FilledButton(onPressed: busy ? null : onOpen, child: Text(busy ? 'Abriendo…' : 'Abrir espacio seguro'))),
+              TextButton(onPressed: onToggleMode, child: Text(masterMode ? 'Usar PIN local' : 'Usar contraseña máster')),
+              if (!masterMode) TextButton(onPressed: onConfigurePin, child: const Text('Configurar PIN en este dispositivo')),
+              if (message != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(message!, textAlign: TextAlign.center, style: TextStyle(color: colors.error, fontWeight: FontWeight.w600))),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _DatabaseInfo extends StatelessWidget {
