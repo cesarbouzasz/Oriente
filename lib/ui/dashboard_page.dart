@@ -217,7 +217,9 @@ class _OverviewPageState extends State<_OverviewPage> {
     if (file == null) return;
     final result = _ics.importEvents(utf8.decode(await file.readAsBytes()), existing: _appointments);
     if (!mounted) return;
-    final proceed = result.duplicates.isEmpty || (await showDialog<bool>(context: context, builder: (context) => AlertDialog(title: const Text('Eventos duplicados'), content: Text('${result.duplicates.length} evento(s) parecen duplicados. ¿Importar solo los nuevos?'), actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')), FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Importar nuevos'))]))) ?? false;
+    final proceed = result.duplicates.isEmpty
+        ? true
+        : (await showDialog<bool>(context: context, builder: (context) => AlertDialog(title: const Text('Eventos duplicados'), content: Text('${result.duplicates.length} evento(s) parecen duplicados. ¿Importar solo los nuevos?'), actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')), FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Importar nuevos'))]))) == true;
     if (!proceed) return;
     for (final event in result.events) {
       _repository.createAppointment(title: event.title, date: event.date, end: event.end, status: event.status, notes: event.notes);

@@ -1,32 +1,12 @@
-CORRECCIÓN COMPLETA DE COMPILACIÓN WINDOWS
-==========================================
+CORRECCIÓN FINAL DEL ERROR BOOL NULLABLE
+========================================
 
-Copia directamente sobre la raíz de Oriente y acepta reemplazar.
-
-Archivos nuevos/restaurados:
-  lib/core/app_languages.dart
-  lib/services/educational_template_catalog.dart
-  lib/services/ics_calendar_service.dart
-  lib/services/local_reminder_service.dart
-  lib/services/pin_unlock_service.dart
-  lib/ui/agenda_toolbar.dart
-  lib/ui/records_pages.dart
-  lib/ui/service_types_page.dart
-
-Archivos corregidos:
-  lib/main.dart
-  lib/ui/login_page.dart
+Sustituye directamente:
   lib/ui/dashboard_page.dart
-  lib/ui/settings_page.dart
-  lib/services/file_selection_service.dart
 
-Correcciones incluidas:
-- login nuevo con Crear nueva y portada flotante.
-- PIN local restaurado.
-- barra de agenda con sintaxis válida.
-- List<int> convertido a Uint8List para file_picker.
-- diálogo nullable convertido a bool.
-- API List<PlatformFile> de file_picker 13.3.2.
+La línea de importación ICS se ha cambiado a una expresión ternaria que siempre
+produce bool. Ya no usa `|| ... ?? false`, que Dart interpretaba con precedencia
+incorrecta.
 
-En GitHub Desktop deben aparecer cambios y archivos nuevos. Haz commit y push.
-Espera una NUEVA ejecución verde antes de descargar el artifact Windows.
+En GitHub Desktop debe aparecer dashboard_page.dart modificado. Haz commit y
+push, espera una nueva ejecución y descarga el artifact de esa ejecución.
