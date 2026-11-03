@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -98,7 +99,7 @@ class _DashboardPageState extends State<DashboardPage> with WidgetsBindingObserv
         appBar: AppBar(title: Text(strings.get('app')), actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search), tooltip: strings.get('search'))]),
         drawer: _preferences.navigation == 'drawer' ? Drawer(child: SafeArea(child: ListView(children: [const DrawerHeader(child: Text('Navegación')), ..._drawerItems()]))) : null,
         body: _preferences.navigation == 'grid' ? _gridShell(content, desktop) : desktop ? Row(children: [NavigationRail(selectedIndex: _selected, onDestinationSelected: (v) => setState(() => _selected = v), labelType: NavigationRailLabelType.all, destinations: _destinations()), Expanded(child: content)]) : content,
-        bottomNavigationBar: _preferences.navigation == 'tabs' && !desktop ? NavigationBar(selectedIndex: _selected, onDestinationSelected: (v) => setState(() => _selected = v), destinations: _destinations().map((d) => NavigationDestination(icon: d.icon, selectedIcon: d.selectedIcon, label: d.label)).toList()) : null,
+        bottomNavigationBar: _preferences.navigation == 'tabs' && !desktop ? NavigationBar(selectedIndex: _selected, onDestinationSelected: (v) => setState(() => _selected = v), destinations: _destinations().map((d) => NavigationDestination(icon: d.icon, selectedIcon: d.selectedIcon, label: (d.label as Text).data ?? '')).toList()) : null,
       ));
     });
   }
@@ -208,7 +209,7 @@ class _OverviewPageState extends State<_OverviewPage> {
   }
 
   Future<void> _exportIcs() async {
-    await FilePicker.saveFile(fileName: 'agenda_cercano_oriente.ics', bytes: _ics.exportEvents(_appointments));
+    await FilePicker.saveFile(fileName: 'agenda_cercano_oriente.ics', bytes: Uint8List.fromList(_ics.exportEvents(_appointments)));
   }
 
   Future<void> _importIcs() async {
@@ -216,7 +217,7 @@ class _OverviewPageState extends State<_OverviewPage> {
     if (file == null) return;
     final result = _ics.importEvents(utf8.decode(await file.readAsBytes()), existing: _appointments);
     if (!mounted) return;
-    final proceed = result.duplicates.isEmpty || await showDialog<bool>(context: context, builder: (context) => AlertDialog(title: const Text('Eventos duplicados'), content: Text('${result.duplicates.length} evento(s) parecen duplicados. ¿Importar solo los nuevos?'), actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')), FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Importar nuevos'))])) ?? false;
+    final proceed = result.duplicates.isEmpty || (await showDialog<bool>(context: context, builder: (context) => AlertDialog(title: const Text('Eventos duplicados'), content: Text('${result.duplicates.length} evento(s) parecen duplicados. ¿Importar solo los nuevos?'), actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')), FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Importar nuevos'))]))) ?? false;
     if (!proceed) return;
     for (final event in result.events) {
       _repository.createAppointment(title: event.title, date: event.date, end: event.end, status: event.status, notes: event.notes);

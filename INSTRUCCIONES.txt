@@ -1,14 +1,32 @@
-CORRECCIÓN FINAL DEL BUILD
-==========================
+CORRECCIÓN COMPLETA DE COMPILACIÓN WINDOWS
+==========================================
 
-Copia directamente sobre la raíz de Oriente:
+Copia directamente sobre la raíz de Oriente y acepta reemplazar.
+
+Archivos nuevos/restaurados:
+  lib/core/app_languages.dart
+  lib/services/educational_template_catalog.dart
+  lib/services/ics_calendar_service.dart
+  lib/services/local_reminder_service.dart
+  lib/services/pin_unlock_service.dart
+  lib/ui/agenda_toolbar.dart
+  lib/ui/records_pages.dart
+  lib/ui/service_types_page.dart
+
+Archivos corregidos:
   lib/main.dart
   lib/ui/login_page.dart
+  lib/ui/dashboard_page.dart
+  lib/ui/settings_page.dart
   lib/services/file_selection_service.dart
 
-main.dart ahora solo importa Flutter y ui/login_page.dart; no importa app_theme.dart
-ni local_reminder_service.dart, que no están disponibles en el repositorio publicado.
-login_page.dart tiene los widgets flotantes reescritos con paréntesis claros.
+Correcciones incluidas:
+- login nuevo con Crear nueva y portada flotante.
+- PIN local restaurado.
+- barra de agenda con sintaxis válida.
+- List<int> convertido a Uint8List para file_picker.
+- diálogo nullable convertido a bool.
+- API List<PlatformFile> de file_picker 13.3.2.
 
-En GitHub Desktop deben aparecer los tres archivos. Haz commit y push.
-Después espera una NUEVA ejecución verde y descarga el artifact Windows de esa ejecución.
+En GitHub Desktop deben aparecer cambios y archivos nuevos. Haz commit y push.
+Espera una NUEVA ejecución verde antes de descargar el artifact Windows.

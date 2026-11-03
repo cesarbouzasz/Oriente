@@ -129,13 +129,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _pickIdentityFile(TextEditingController target, List<String> extensions) async {
     final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: extensions);
-    if (result != null && result.files.single.path != null) setState(() => target.text = result.files.single.path!);
+    if (result != null && result.isNotEmpty && result.single.path != null) setState(() => target.text = result.single.path!);
   }
 
   Future<void> _registerTemplate(EducationalTemplate template) async {
     final file = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['docx', 'odt', 'xlsx']);
-    if (file == null || file.files.isEmpty) return;
-    final selected = file.files.single;
+    if (file == null || file.isEmpty) return;
+    final selected = file.single;
     if (selected.path == null) {
       setState(() => _message = 'No se pudo registrar la plantilla: el selector no proporcionó una ruta local.');
       return;
