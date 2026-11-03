@@ -117,11 +117,22 @@ class OrientationRepository {
   void addSignedDocumentVersion({required String studentId, required String type, required String title, required int version, required String path, required String profileId, required String subject, required String sha256}) => _db.execute("INSERT INTO document_versions(id, student_id, document_type, title, version, status, file_path, created_at, updated_at, signature_status, signature_profile_id, signature_subject, signed_at, sha256) VALUES (?, ?, ?, ?, ?, 'signed', ?, ?, ?, 'pades-bes', ?, ?, ?, ?)", [_uuid.v4(), studentId, type, title, version, path, DateTime.now().toUtc().toIso8601String(), DateTime.now().toUtc().toIso8601String(), profileId, subject, DateTime.now().toUtc().toIso8601String(), sha256]);
   void setDocumentStatus(String id, String status) => transitionDocumentStatus(id: id, status: status);
 
-  void logAudit({required String eventType, String entityType = '', String entityId = '', String details = ''}) => _db.execute('INSERT INTO audit_log(id, event_type, entity_type, entity_id, details, created_at) VALUES (?, ?, ?, ?, ?, ?)', [_uuid.v4(), eventType, entityType, entityId, details, DateTime.now().toUtc().toIso8601String()]);
+  void logAudit({required String eventType, String entityType = '', String entityId = '', String details = ''}) {
+    _ensureAuditTables();
+    _db.execute('INSERT INTO audit_log(id, event_type, entity_type, entity_id, details, created_at) VALUES (?, ?, ?, ?, ?, ?)', [_uuid.v4(), eventType, entityType, entityId, details, DateTime.now().toUtc().toIso8601String()]);
+  }
 
   List<Map<String, Object?>> auditLog({int limit = 200}) => _rows('SELECT id, event_type, entity_type, entity_id, details, created_at FROM audit_log ORDER BY created_at DESC LIMIT ?', [limit.clamp(1, 1000)]);
 
-  void recordBackup({required String path, required String sha256, required int sizeBytes, bool verified = true}) => _db.execute('INSERT INTO backup_records(id, path, sha256, size_bytes, created_at, verified) VALUES (?, ?, ?, ?, ?, ?)', [_uuid.v4(), path, sha256, sizeBytes, DateTime.now().toUtc().toIso8601String(), verified ? 1 : 0]);
+  void recordBackup({required String path, required String sha256, required int sizeBytes, bool verified = true}) {
+    _ensureAuditTables();
+    _db.execute('INSERT INTO backup_records(id, path, sha256, size_bytes, created_at, verified) VALUES (?, ?, ?, ?, ?, ?)', [_uuid.v4(), path, sha256, sizeBytes, DateTime.now().toUtc().toIso8601String(), verified ? 1 : 0]);
+  }
+
+  void _ensureAuditTables() {
+    _db.execute('CREATE TABLE IF NOT EXISTS audit_log (id TEXT PRIMARY KEY NOT NULL, event_type TEXT NOT NULL, entity_type TEXT NOT NULL DEFAULT \'\', entity_id TEXT NOT NULL DEFAULT \'\', details TEXT NOT NULL DEFAULT \'\', created_at TEXT NOT NULL)');
+    _db.execute('CREATE TABLE IF NOT EXISTS backup_records (id TEXT PRIMARY KEY NOT NULL, path TEXT NOT NULL, sha256 TEXT NOT NULL, size_bytes INTEGER NOT NULL, created_at TEXT NOT NULL, verified INTEGER NOT NULL DEFAULT 0)');
+  }
 
   String createDocumentVersion({required String studentId, required String type, required String title, String path = '', String contentHash = '', String parentVersionId = ''}) {
     final previous = _db.select('SELECT COALESCE(MAX(version), 0) AS version FROM document_versions WHERE student_id = ? AND document_type = ? AND title = ?', [studentId, type, title]).first['version'] as int;

@@ -1,13 +1,20 @@
-MIGRACIÓN DE BASES ANTIGUAS
-===========================
+PARCHE DEFINITIVO DE AUDITORÍA
+==============================
 
-Sustituye estos archivos en la raíz de Oriente:
+El mensaje no such table: audit_log con el mismo texto significa que se está
+ejecutando un artifact que no lleva la migración anterior, o que la tabla no
+llegó a crearse en una base antigua.
+
+Sustituye estos tres archivos:
   lib/db/encrypted_database.dart
   lib/db/orientation_schema.dart
+  lib/db/orientation_repository.dart
 
-La apertura de SQLCipher crea automáticamente audit_log, backup_records e
-índices si la base fue creada con una versión anterior. No borres la base .db.
+Se han añadido dos defensas:
+1. La apertura crea audit_log y backup_records.
+2. logAudit y recordBackup vuelven a ejecutar CREATE TABLE IF NOT EXISTS justo
+   antes del INSERT.
 
-Haz commit y push, espera una nueva ejecución verde y descarga el artifact
-Windows de esa ejecución. Después selecciona la misma base .db y usa la
-contraseña máster habitual.
+No borres la base .db ni cambies la contraseña.
+Haz commit y push. Espera una NUEVA ejecución verde y descarga el artifact de
+esa ejecución; no reutilices el ZIP/EXE anterior.
