@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import 'orientation_schema.dart';
+
 /// Adaptador de SQLCipher para escritorio y Android.
 ///
 /// IMPORTANTE: el binario nativo cargado por `sqlite3` debe ser SQLCipher,
@@ -62,6 +64,11 @@ class EncryptedDatabase {
         INSERT OR IGNORE INTO app_metadata(key, value)
         VALUES ('schema_version', '1');
       ''');
+      createOrientationSchema(db);
+      // Migración defensiva para bases creadas con una versión anterior.
+      // La auditoría se registra durante el login, por lo que debe existir
+      // incluso si la creación de la base ocurrió antes de añadir este módulo.
+      _ensureSecurityTables(db);
       _database = db;
     } catch (_) {
       db.close();
@@ -73,5 +80,31 @@ class EncryptedDatabase {
     _database?.execute('PRAGMA wal_checkpoint(FULL);');
     _database?.close();
     _database = null;
+  }
+
+  void _ensureSecurityTables(Database db) {
+    db.execute('''
+      CREATE TABLE IF NOT EXISTS audit_log (
+        id TEXT PRIMARY KEY NOT NULL,
+        event_type TEXT NOT NULL,
+        entity_type TEXT NOT NULL DEFAULT '',
+        entity_id TEXT NOT NULL DEFAULT '',
+        details TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL
+      );
+    ''');
+    db.execute('''
+      CREATE TABLE IF NOT EXISTS backup_records (
+        id TEXT PRIMARY KEY NOT NULL,
+        path TEXT NOT NULL,
+        sha256 TEXT NOT NULL,
+        size_bytes INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        verified INTEGER NOT NULL DEFAULT 0
+      );
+    ''');
+    db.execute('CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);');
+    db.execute('CREATE INDEX IF NOT EXISTS idx_audit_entity ON audit_log(entity_type, entity_id);');
+    db.execute('CREATE INDEX IF NOT EXISTS idx_backup_created ON backup_records(created_at);');
   }
 }

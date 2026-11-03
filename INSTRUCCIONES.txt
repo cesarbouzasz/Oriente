@@ -1,12 +1,13 @@
-CORRECCIÓN FINAL DEL ERROR BOOL NULLABLE
-========================================
+MIGRACIÓN DE BASES ANTIGUAS
+===========================
 
-Sustituye directamente:
-  lib/ui/dashboard_page.dart
+Sustituye estos archivos en la raíz de Oriente:
+  lib/db/encrypted_database.dart
+  lib/db/orientation_schema.dart
 
-La línea de importación ICS se ha cambiado a una expresión ternaria que siempre
-produce bool. Ya no usa `|| ... ?? false`, que Dart interpretaba con precedencia
-incorrecta.
+La apertura de SQLCipher crea automáticamente audit_log, backup_records e
+índices si la base fue creada con una versión anterior. No borres la base .db.
 
-En GitHub Desktop debe aparecer dashboard_page.dart modificado. Haz commit y
-push, espera una nueva ejecución y descarga el artifact de esa ejecución.
+Haz commit y push, espera una nueva ejecución verde y descarga el artifact
+Windows de esa ejecución. Después selecciona la misma base .db y usa la
+contraseña máster habitual.
